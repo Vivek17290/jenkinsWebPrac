@@ -1,0 +1,66 @@
+MAVEN WEB PROJECT AUTOMATION STEPS
+
+Project Structure:
+MavenWeb_Build → MavenWeb_Test → MavenWeb_Deploy
+
+STEP 1: Create MavenWeb_Build Job
+- Job Type: Freestyle Project
+- Description: "Web Build demo"
+- Source Code Management: Git
+  - Repository URL: [GitMavenWeb repo URL]
+  - Branches: */main or */master
+- Build Steps:
+  1. Invoke top-level Maven targets
+     - Maven version: MAVEN_HOME
+     - Goals: clean
+  2. Invoke top-level Maven targets
+     - Maven version: MAVEN_HOME
+     - Goals: install
+- Post-build Actions:
+  1. Archive the artifacts: **/*
+  2. Build other projects: MavenWeb_Test
+     - Trigger: Only if build is stable
+
+STEP 2: Create MavenWeb_Test Job
+- Job Type: Freestyle Project
+- Description: "Test demo"
+- Build Environment: Delete workspace before build starts
+- Build Steps:
+  1. Copy artifacts from another project
+     - Project: MavenWeb_Build
+     - Build: Stable build only
+     - Artifacts: **/*
+  2. Invoke top-level Maven targets
+     - Maven version: MAVEN_HOME
+     - Goals: test
+- Post-build Actions:
+  1. Archive the artifacts: **/*
+  2. Build other projects: MavenWeb_Deploy
+
+STEP 3: Create MavenWeb_Deploy Job
+- Job Type: Freestyle Project
+- Description: "Web Code Deployment"
+- Build Environment: Delete workspace before build starts
+- Build Steps:
+  1. Copy artifacts from another project
+     - Project: MavenWeb_Test
+     - Build: Stable build only
+     - Artifacts: **/*
+- Post-build Actions:
+  - Deploy WAR/EAR to a container
+    - WAR/EAR File: **/*.war
+    - Context path: Webpath
+    - Container: Tomcat 9.x remote
+    - Credentials: username: admin, password: 1234
+    - Tomcat URL: https://localhost:8085/
+
+STEP 4: Create Pipeline View
+- View Type: Build pipeline view
+- Name: MavenWeb_Pipeline
+- Layout: Based on upstream/downstream relationship
+- Initial job: MavenWeb_Build
+
+STEP 5: Run Pipeline
+- Click "RUN" trigger
+- Check console output for success
+- Verify deployment on Tomcat at /webpath

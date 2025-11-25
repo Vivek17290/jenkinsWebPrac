@@ -1,0 +1,101 @@
+MAVEN JAVA SCRIPTED PIPELINE
+
+Pipeline Script for Java Project:
+
+node {
+    stage('Checkout') {
+        git branch: 'main', 
+            url: '[GitMavenJava repository URL]'
+    }
+    
+    stage('Clean') {
+        bat 'mvn clean'  // Use 'sh' for Linux/Mac
+    }
+    
+    stage('Build') {
+        bat 'mvn compile'
+    }
+    
+    stage('Test') {
+        bat 'mvn test'
+    }
+    
+    stage('Package') {
+        bat 'mvn package'
+    }
+    
+    stage('Archive') {
+        archiveArtifacts artifacts: '**/*.jar', 
+                         fingerprint: true
+    }
+    
+    stage('Deploy') {
+        // Add deployment steps here
+        // Example: Copy to server, deploy to container, etc.
+        bat 'echo "Deployment completed"'
+    }
+}
+
+Alternative Multi-stage Pipeline:
+
+pipeline {
+    agent any
+    tools {
+        maven 'MAVEN_HOME'
+    }
+    stages {
+        stage('Clean') {
+            steps {
+                bat 'mvn clean'
+            }
+        }
+        stage('Compile') {
+            steps {
+                bat 'mvn compile'
+            }
+        }
+        stage('Test') {
+            steps {
+                bat 'mvn test'
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage('Package') {
+            steps {
+                bat 'mvn package -DskipTests'
+            }
+        }
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', 
+                               fingerprint: true
+            }
+        }
+    }
+    post {
+        always {
+            emailext (
+                subject: "Build Result: ${currentBuild.result}",
+                body: "Build ${currentBuild.fullDisplayName} completed with status: ${currentBuild.result}",
+                to: "team@example.com"
+            )
+        }
+    }
+}
+
+Required Plugins:
+- Pipeline
+- Maven Integration
+- JUnit
+- Email Extension
+- Git
+
+Configuration Notes:
+- Set up MAVEN_HOME in Global Tool Configuration
+- Configure Git credentials in Jenkins Credentials Store
+- Adjust build triggers and notifications as needed
+- Modify deployment stage based on target environment
