@@ -1,0 +1,100 @@
+# =========================================================
+# BASIC DEPLOYMENT COMMANDS
+# =========================================================
+
+kubectl create deployment myngnix --image=nginx         # Create a deployment
+kubectl get deployments                                 # List all deployments
+kubectl describe deployment myngnix                     # Detailed info about deployment
+
+kubectl scale deployment myngnix --replicas=4           # Scale deployment to 4 pods
+kubectl delete deployment myngnix                       # Delete deployment
+
+
+# =========================================================
+# POD COMMANDS
+# =========================================================
+
+kubectl get pods                                        # List all pods
+kubectl get pods -o wide                                # Show pods with node/IP info
+kubectl describe pod <pod-name>                         # Detailed pod description
+kubectl delete pod <pod-name>                           # Delete a specific pod
+
+kubectl logs <pod-name>                                 # Show logs of a pod
+kubectl logs <pod-name> -f                              # Stream logs (live)
+
+
+# =========================================================
+# SERVICE COMMANDS
+# =========================================================
+
+kubectl expose deployment myngnix \
+  --type=NodePort \
+  --port=80 \
+  --target-port=80                                      # Expose deployment externally
+
+kubectl get services                                    # List services
+kubectl describe service myngnix                        # Info about service
+kubectl delete service myngnix                          # Delete service
+
+kubectl port-forward svc/myngnix 8081:80                # Access app using localhost:8081
+
+
+# =========================================================
+# NAMESPACE COMMANDS
+# =========================================================
+
+kubectl get namespaces                                  # List namespaces
+kubectl create namespace mynamespace                    # Create new namespace
+kubectl delete namespace mynamespace                    # Delete namespace
+kubectl get pods -n kube-system                         # Pods in kube-system namespace
+
+
+# =========================================================
+# CONFIG & CONTEXT COMMANDS
+# =========================================================
+
+kubectl config view                                     # Show kubeconfig
+kubectl config get-contexts                             # List contexts
+kubectl config current-context                          # Show current context
+kubectl config use-context <context-name>               # Switch context
+
+
+# =========================================================
+# NODE COMMANDS
+# =========================================================
+
+kubectl get nodes                                       # List cluster nodes
+kubectl describe node <node-name>                       # Describe node
+kubectl top node                                        # Show CPU/memory usage (metrics server required)
+
+
+# =========================================================
+# APPLY / DELETE FROM YAML
+# =========================================================
+
+kubectl apply -f app.yaml                               # Apply configuration from YAML
+kubectl delete -f app.yaml                              # Delete resources from YAML
+kubectl get all                                         # Get all resources in current namespace
+
+
+# =========================================================
+# MINIKUBE COMMANDS
+# =========================================================
+
+minikube start                                          # Start Minikube cluster
+minikube stop                                           # Stop cluster
+minikube status                                         # Show status
+minikube delete                                         # Delete Minikube cluster
+minikube dashboard                                      # Open Kubernetes dashboard
+minikube service myngnix                                # Open service in browser automatically
+
+
+# =========================================================
+# DEBUGGING COMMANDS
+# =========================================================
+
+kubectl exec -it <pod-name> -- sh                       # Open shell into pod
+kubectl describe pod <pod-name>                         # View events/logs/problems
+kubectl get events --sort-by=.metadata.creationTimestamp # Recent events (sorted)
+kubectl explain pod                                     # Explain any Kubernetes resource
+

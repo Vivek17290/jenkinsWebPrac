@@ -1,0 +1,67 @@
+make the instance and configure all the things
+
+open the cmd in the location of the key value 
+
+copy paste the ssh command given 
+
+sudo apt update
+
+sudo apt-get install docker.io
+
+sudo apt install git 
+
+sudo apt install nano
+
+create a html file
+
+open another terminal
+
+git init 
+
+git add .
+
+git commit -m "message"
+
+git branch -M main
+
+git remote add origin ""
+
+git push -u origin main
+
+
+
+
+git clone origin in the aws terminal
+
+
+ls
+
+cd AwsExample
+
+ls 
+
+index.html
+
+nano Dockerfile
+
+write the dockerfile
+from nginx:alpine
+COPY . /usr/share/nginx/html
+
+ctrl+o
+ctrl+s
+
+
+sudo docker build -t mywebapp .
+
+sudo docker run -d -p 80:80 mywebapp
+
+
+get public ipv4
+if doesn't work use http insterd of https
+
+
+
+sudo docker ps
+
+sudo docker stop contianerid

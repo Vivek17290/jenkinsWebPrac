@@ -1,0 +1,52 @@
+# -------------------------------
+# Create Deployment using Nginx
+# -------------------------------
+kubectl create deployment myngnix --image=nginx    # Creates a deployment using nginx image
+
+# -------------------------------
+# View Deployments
+# -------------------------------
+kubectl get deployments                           # Lists all deployments
+
+# -------------------------------
+# Expose Deployment as Service
+# -------------------------------
+kubectl expose deployment myngnix \
+  --type=NodePort \
+  --port=80 \
+  --target-port=80                                # Makes Nginx accessible externally
+
+# -------------------------------
+# Scale Deployment
+# -------------------------------
+kubectl scale deployment myngnix --replicas=4      # Creates 4 pods for load balancing
+
+# -------------------------------
+# View Pods
+# -------------------------------
+kubectl get pods                                   # Shows running pods
+
+# -------------------------------
+# Port Forwarding (Access via Browser)
+# -------------------------------
+kubectl port-forward svc/myngnix 8081:80           # Access Nginx at http://localhost:8081
+
+# -------------------------------
+# Minikube Dashboard
+# -------------------------------
+minikube dashboard                                 # Opens Kubernetes dashboard in browser
+
+# -------------------------------
+# Delete Deployment
+# -------------------------------
+kubectl delete deployment myngnix                  # Deletes the deployment and its pods
+
+# -------------------------------
+# Delete Service
+# -------------------------------
+kubectl delete service myngnix                     # Removes NodePort service
+
+# -------------------------------
+# Stop Minikube Cluster
+# -------------------------------
+minikube stop                                      # Stops the Minikube VM / cluster
