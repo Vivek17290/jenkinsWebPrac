@@ -1,0 +1,188 @@
+K8
+
+
+minikube start
+
+kubectl create deployment mynginx --image=nginx
+
+kubectl expose deployment mynginx --type=NodePort --port=80
+
+kubectl scale deployment mynginx --replicas=4
+
+kubectl port-forward svc/mynginx 8090:80
+
+kubectl get pods
+kubectl get svc
+
+minikube ip
+minikube service mynginx --url
+
+kubectl describe pods
+
+
+Nagios
+
+
+docker pull jasonrivers/nagios
+
+docker run --name nagios -d -p 8080:80 jasonrivers/nagios
+
+docker stop <id>
+
+
+Jenkins
+
+
+1. go to localhost:port of Jenkins
+
+For Java: 
+	- Create java_build
+	- add git repo
+	- add maven_home for clean, install -- build steps
+	- add archive - **/*, build other - java_test -- post-build steps
+	- Create java test
+	- set copy from another + maven_home for test -- build steps
+	- add archive - **/*, post-build steps
+	- build a view & check stages
+
+For Web:
+	- Do same but create 3 - build, test, deploy
+	- enable "delete workspace before build starts" on all
+	- in deploy-post-build -- "deploy war" -- add credentials from xml file -- give url
+	- create view -- initial job as build
+	- check stages
+
+For scripting:
+	- Select Pipeline in new items
+
+script: 
+
+pipeline {
+   agent any
+   tools {
+	maven "MAVEN_HOME"
+   }
+   stages {
+	stage ('git repo & clean') {
+		steps {
+			bat "git clone <url>"
+			bat "mvn clean -f <file_name>"
+		}
+	}
+	stage ('install') {
+		steps {
+			bat "mvn install -f <file_name>"
+		}
+	}
+	stage ('test') {
+		steps {
+			bat "mvn test -f <file_name>"
+		}
+	}
+	stage ('package') {
+		steps {
+			bat "mvn package -f <file_name>"
+		}
+	}
+}
+
+
+
+Web-Hooks
+
+
+1. get ngrok auth key
+2. ngrok config add-authtoken <key>
+3. ngrok.exe http 8888
+4. copy forwarding url shown in GitHub "Settings/Webhooks/PayloadURL"
+  (example https://corkier-darla-handsome.ngrok-free.dev/github-webhook/)
+  (add "github-webhook" at end if not there)
+5. in Jenkins, create new item and add git url
+6. select "GitHub hook trigger for GITS" in Triggers
+7. make changes in any file & commit
+8. Build starts automatically in Jenkins
+
+
+
+AWS
+
+
+1. go to Leanrer lab
+2. click on start lab
+3. click on AWS and in service select EC2
+4. select instances -- launch instance
+5. give name, select ubuntu, archi
+6. create a new key-pair login (RSA) and download file
+7. click on it and select SSH client and do the steps mentioned
+8. start ubuntu and install git nano docker 
+9. clone a sample repo (contain .war for web projects)
+10. write DockerFile and sudo docker build -t lab2 .
+11. sudo docker run-d-p 8081:8080 lab2
+12. take public ip from aws and run in web browser 
+    - (change https to http if not working)
+    - (got to newtwork and add port if needed)
+
+DockerFile
+
+For java -
+
+FROM  nginx:alpine
+COPY . /usr/share/nginx/html
+
+For web - 
+
+FROM tomcat:10.1-jdk17
+COPY target/*.war /usr/local/tomcat/webapps/myapp.war
+
+
+
+Email
+
+
+1. open google account -> security -> enable 2-step verification
+2. go to search -> app passowrds -> select app (choose other)
+3. add "jenkins-demo" name and get 16-digit-passoword
+4. Go to Jenkins -> manage plugins -> install email extension plugin
+5. go to Configure Sys and add these
+
+E-mail Notification
+
+SMTP Server - smtp.gmail.com (Gmail’s mail server)
+Use SMTP Authentication	- ✔ Enabled
+User Name - Your Gmail address
+Password - The 16-digit App Password
+Use SSL	- ✔ Enabled
+SMTP Port - 465
+Reply-To Address - Your same Gmail ID
+
+6. Click test configuration by sending test e-mail
+
+Extended E-mail Notification
+
+Fill the following fields:
+
+SMTP Server - smtp.gmail.com
+SMTP Port - 465
+Use SSL - ✔ Enabled
+Credentials - Add Gmail + App Password
+Default Content Type - text/html (optional)
+
+in "Default Triggers" - enable
+
+- Always
+- Failure - Any
+- Failure - X
+- Status Changed
+- Success
+- Test Improvement
+- Test Regression
+- Unstable -> Success
+
+7. Create a new item -- in post-build actions -- add Email Notification
+8. select in post-build - "Editable Email Notification" and add: 
+
+Project Recipient List Add recipient email addresses (comma-separated)
+Content Type -  Default (text/plain) or text/html
+Triggers -  Select events (e.g., Failure, Success, etc.)
+
+9. Click ok and go to gmail for checking after building
