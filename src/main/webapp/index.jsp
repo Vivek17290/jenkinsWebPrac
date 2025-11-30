@@ -36,7 +36,7 @@
 <div class="banner"></div>
 
 <div class="content">
-    <h2>Welcome to Our Online Shopping Store</h2>
+    <h2>Welcome to vivek's Online Shopping Store</h2>
     <p>Browse products, manage items, and experience a simple shopping workflow.</p>
 
     <a href="product?action=list">
