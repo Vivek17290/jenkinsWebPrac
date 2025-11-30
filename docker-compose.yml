@@ -1,0 +1,9 @@
+services:
+  flaskapp:
+    image: python:3.10
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: python app.py
+    ports:
+      - "5000:5000"
