@@ -1,0 +1,76 @@
+✅ 1. Check if SSH keys exist
+dir ~/.ssh
+
+
+If you see id_ed25519 or id_rsa, you already have keys.
+
+✅ 2. Generate an SSH key (Windows)
+In Git Bash (recommended):
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+
+or if not supported:
+
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+
+Press Enter to accept the default path:
+
+/c/Users/<YourName>/.ssh/id_ed25519
+
+✅ 3. Start SSH Agent
+Git Bash:
+eval "$(ssh-agent -s)"
+
+PowerShell:
+Start-Service ssh-agent
+Get-Service ssh-agent
+
+
+(If it shows Running, good.)
+
+✅ 4. Add your SSH key
+
+Git Bash:
+
+ssh-add ~/.ssh/id_ed25519
+
+
+PowerShell:
+
+ssh-add $env:USERPROFILE\.ssh\id_ed25519
+
+✅ 5. Copy the public key
+
+Git Bash:
+
+cat ~/.ssh/id_ed25519.pub
+
+
+PowerShell:
+
+Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
+
+
+Copy the entire output.
+
+✅ 6. Add the key to GitHub
+
+Go to:
+
+GitHub → Settings → SSH and GPG keys → New SSH Key
+Paste your copied key → Save.
+
+✅ 7. Test SSH connection
+ssh -T git@github.com
+
+
+You should see:
+
+Hi <username>! You've successfully authenticated...
+
+✅ 8. Clone using SSH URL
+git clone git@github.com:username/repo.git
+
+✅ 9. Convert an existing repo to SSH
+git remote set-url origin git@github.com:username/repo.git
